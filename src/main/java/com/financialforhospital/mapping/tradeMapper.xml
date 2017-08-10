@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.financialforhospital.dao.tradeMapper">
+  <resultMap id="BaseResultMap" type="com.financialforhospital.model.trade">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="HOSPTIAL_NAME" jdbcType="VARCHAR" property="hosptialName" />
+    <result column="HOSPTAIL_ID" jdbcType="VARCHAR" property="hosptailId" />
+    <result column="PATIENT_NAME" jdbcType="VARCHAR" property="patientName" />
+    <result column="CARD_NUM" jdbcType="VARCHAR" property="cardNum" />
+    <result column="OUTPATIENT_AND_HOSPTIAL_DEP" jdbcType="VARCHAR" property="outpatientAndHosptialDep" />
+    <result column="COMSUMPTION_PROJECT" jdbcType="VARCHAR" property="comsumptionProject" />
+    <result column="HOSPTIAL_NUM" jdbcType="VARCHAR" property="hosptialNum" />
+    <result column="TRADE_MONEY" jdbcType="DECIMAL" property="tradeMoney" />
+    <result column="ORDER_NUM" jdbcType="VARCHAR" property="orderNum" />
+    <result column="TRADE_TYPE" jdbcType="VARCHAR" property="tradeType" />
+    <result column="TRADE_TIME" jdbcType="TIMESTAMP" property="tradeTime" />
+    <result column="TRADE_SOURCE" jdbcType="VARCHAR" property="tradeSource" />
+    <result column="SOURCE_ID" jdbcType="VARCHAR" property="sourceId" />
+    <result column="STATES" jdbcType="VARCHAR" property="states" />
+    <result column="AGE" jdbcType="INTEGER" property="age" />
+    <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+    <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
+    <result column="DIAGNOSIS" jdbcType="VARCHAR" property="diagnosis" />
+    <result column="GENDER" jdbcType="VARCHAR" property="gender" />
+    <result column="UNDERLINEAMOUNT" jdbcType="DECIMAL" property="underlineamount" />
+    <result column="UPLINEAMOUNT" jdbcType="DECIMAL" property="uplineamount" />
+    <result column="UPLINR_OR_UNDERLINE" jdbcType="VARCHAR" property="uplinrOrUnderline" />
+    <result column="PATIENT_ID" jdbcType="VARCHAR" property="patientId" />
+    <result column="ID_NO" jdbcType="VARCHAR" property="idNo" />
+    <result column="RECEIPT_NO" jdbcType="VARCHAR" property="receiptNo" />
+    <result column="MONTH" jdbcType="VARCHAR" property="month" />
+    <result column="YEAR" jdbcType="VARCHAR" property="year" />
+    <result column="TYPE" jdbcType="VARCHAR" property="type" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, HOSPTIAL_NAME, HOSPTAIL_ID, PATIENT_NAME, CARD_NUM, OUTPATIENT_AND_HOSPTIAL_DEP, 
+    COMSUMPTION_PROJECT, HOSPTIAL_NUM, TRADE_MONEY, ORDER_NUM, TRADE_TYPE, TRADE_TIME, 
+    TRADE_SOURCE, SOURCE_ID, STATES, AGE, PHONE, ADDRESS, DIAGNOSIS, GENDER, UNDERLINEAMOUNT, 
+    UPLINEAMOUNT, UPLINR_OR_UNDERLINE, PATIENT_ID, ID_NO, RECEIPT_NO, MONTH, YEAR, TYPE
+  </sql>
+  <select id="selectTradeByHospitalId" parameterType="com.financialforhospital.model.trade" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from yd_trade
+    where HOSPTAIL_ID = #{hosptailId,jdbcType=VARCHAR}
+    <if test="patientName != null and patientName !=''">
+      and PATIENT_NAME like N'%' #{patientName} '%'
+    </if>
+    <if test="cardNum != null and cardNum !=''">
+      and CARD_NUM like N'%' #{cardNum,jdbcType=INTEGER} '%'
+    </if>
+    <if test="hosptialNum != null and hosptialNum !=''">
+      and HOSPTIAL_NUM like N'%' #{hosptialNum,jdbcType=INTEGER} '%'
+    </if>
+    <if test="orderNum != null and orderNum !=''">
+      and ORDER_NUM like N'%' #{orderNum,jdbcType=VARCHAR} '%'
+    </if>
+    <if test="tradeType == 1">
+      and TRADE_TYPE = "充值"
+    </if>
+    <if test="tradeType ==2">
+      and TRADE_TYPE = "缴费"
+    </if>
+    <if test="states == 1">
+      and STATES = "0"
+    </if>
+    <if test="states == 2">
+      and STATES = "1"
+    </if>
+    <if test="cardType ==1">
+      and CARD_NUM is not null and CARD_NUM != ''
+    </if>
+    <if test="cardType ==2">
+      and HOSPTIAL_NUM is not null and HOSPTIAL_NUM != ''
+    </if>
+    <if test="startTime != null and startTime !='' and endTime != null and endTime !='' ">
+      and TRADE_TIME between #{startTime} and #{endTime}
+    </if>
+    <if test="startTime != null and startTime !='' and endTime == null ">
+      and TRADE_TIME > #{startTime}
+    </if>
+    <if test="startTime == null and startTime =='' and endTime != null and endTime !='' ">
+      and TRADE_TIME between #{startTime} and #{endTime}
+    </if>
+    order by TRADE_TIME DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from yd_trade
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+</mapper>
